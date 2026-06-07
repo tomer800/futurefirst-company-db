@@ -1,0 +1,163 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  padding: 40px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(180deg, rgba(201,168,76,0.04) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.heroText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.star {
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.heroTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.heroBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  background: var(--accent-dim);
+  border: 1px solid var(--border2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  gap: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contentHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.searchInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.searchQuery {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.clearSearch {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+.clearSearch:hover { opacity: 0.8; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 8px;
+}
+
+.emptyIcon {
+  font-size: 32px;
+  color: var(--text3);
+}
+
+.emptyText {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text2);
+}
+
+.emptySub {
+  font-size: 13px;
+  color: var(--text3);
+}
+
+.loadMore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.loadMoreBtn {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.loadMoreBtn:hover {
+  background: var(--gold-dim);
+  border-color: rgba(201,168,76,0.3);
+  color: var(--gold);
+}
+
+.loadMoreCount {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* Filter panel border */
+aside {
+  border-right: 1px solid var(--border);
+  padding: 24px 20px;
+}
