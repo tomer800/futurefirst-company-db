@@ -10,18 +10,9 @@ export default function Header({ stats, view, onViewChange }) {
       </div>
       <div className={styles.right}>
         <nav className={styles.nav}>
-          <button
-            className={`${styles.navBtn} ${view === 'analytics' ? styles.navActive : ''}`}
-            onClick={() => onViewChange('analytics')}
-          >
-            Analytics
-          </button>
-          <button
-            className={`${styles.navBtn} ${view === 'companies' ? styles.navActive : ''}`}
-            onClick={() => onViewChange('companies')}
-          >
-            Companies
-          </button>
+          <button className={`${styles.navBtn} ${view === 'analytics' ? styles.navActive : ''}`} onClick={() => onViewChange('analytics')}>Analytics</button>
+          <button className={`${styles.navBtn} ${view === 'companies' ? styles.navActive : ''}`} onClick={() => onViewChange('companies')}>Companies</button>
+          <button className={`${styles.navBtn} ${styles.radarBtn} ${view === 'radar' ? styles.navActive : ''}`} onClick={() => onViewChange('radar')}>◎ Deal Radar</button>
         </nav>
         {stats && (
           <div className={styles.pill}>

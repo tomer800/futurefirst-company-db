@@ -1,4 +1,5 @@
 import styles from './CompanyCard.module.css'
+import RadarBadge from './RadarBadge.jsx'
 
 const DOMAIN_COLORS = {
   'Healthcare & Life Sciences': '#10b981',
@@ -48,7 +49,10 @@ export default function CompanyCard({ company, onClick }) {
       <div className={styles.top}>
         <div className={styles.nameRow}>
           <h3 className={styles.name}>{company.name}</h3>
-          {company.year && <span className={styles.year}>{Math.round(company.year)}</span>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            {company.radar_tier >= 2 && <RadarBadge score={company.radar_score} tier={company.radar_tier} />}
+            {company.year && <span className={styles.year}>{Math.round(company.year)}</span>}
+          </div>
         </div>
         <div className={styles.domains}>
           <span className={styles.domain} style={{ color, borderColor: `${color}30`, background: `${color}10` }}>

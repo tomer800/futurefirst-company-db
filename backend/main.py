@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from typing import Optional
 import search_engine
 import database
+import radar as radar_engine
 import google_enrichment
 
 load_dotenv()
@@ -119,6 +120,52 @@ async def google_search_endpoint(q: str = Query(...)):
 
 
 # ── Admin endpoints ────────────────────────────────────────────────────────────
+
+@app.get("/api/radar")
+def get_radar(
+    tier: Optional[int] = None,
+    limit: int = Query(default=50, le=200),
+    offset: int = 0,
+):
+    conn = database.get_conn()
+    where = "WHERE radar_tier IS NOT NULL"
+    params = []
+    if tier is not None:
+        where += " AND radar_tier = ?"
+        params.append(tier)
+    total = conn.execute(f"SELECT COUNT(*) FROM companies {where}", params).fetchone()[0]
+    rows = conn.execute(
+        f"SELECT * FROM companies {where} ORDER BY radar_score DESC LIMIT ? OFFSET ?",
+        params + [limit, offset]
+    ).fetchall()
+    conn.close()
+    return {"total": total, "companies": [dict(r) for r in rows]}
+
+
+@app.get("/api/radar/stats")
+def get_radar_stats():
+    conn = database.get_conn()
+    tiers = conn.execute(
+        "SELECT radar_tier, radar_label, COUNT(*) as count FROM companies GROUP BY radar_tier ORDER BY radar_tier DESC"
+    ).fetchall()
+    top = conn.execute(
+        "SELECT * FROM companies WHERE radar_tier = 3 ORDER BY radar_score DESC LIMIT 10"
+    ).fetchall()
+    conn.close()
+    return {
+        "tiers": [dict(t) for t in tiers],
+        "top_matches": [dict(c) for c in top],
+    }
+
+
+@app.get("/api/radar/score/{company_id}")
+def score_company(company_id: int):
+    company = database.get_company_by_id(company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Not found")
+    result = radar_engine.compute_radar_score(company)
+    return {"company_id": company_id, "company_name": company["name"], **result}
+
 
 @app.post("/api/admin/rebuild-index")
 def rebuild_search_index():

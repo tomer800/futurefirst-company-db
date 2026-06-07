@@ -33,6 +33,13 @@ def init_db(excel_path: str):
     df["round_type"] = df["round_type"].str.strip()
     df.loc[df["round_type"] == "Early stage VC", "round_type"] = "Early Stage VC"
 
+    # Compute radar scores
+    from radar import compute_radar_score
+    records = df.to_dict(orient="records")
+    df["radar_score"] = [compute_radar_score(r)["score"] for r in records]
+    df["radar_label"] = [compute_radar_score(r)["label"] for r in records]
+    df["radar_tier"] = [compute_radar_score(r)["tier"] for r in records]
+
     conn = sqlite3.connect(DB_PATH)
     df.to_sql("companies", conn, if_exists="replace", index=True, index_label="id")
     conn.commit()

@@ -96,3 +96,11 @@
   color: #000 !important;
   font-weight: 600;
 }
+
+.radarBtn {
+  color: #22c55e !important;
+}
+.radarBtn.navActive {
+  background: #22c55e !important;
+  color: #000 !important;
+}

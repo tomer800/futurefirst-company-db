@@ -7,6 +7,7 @@ import CompanyCard from './components/CompanyCard.jsx'
 import CompanyModal from './components/CompanyModal.jsx'
 import StatsBar from './components/StatsBar.jsx'
 import AnalyticsDashboard from './components/AnalyticsDashboard.jsx'
+import DealRadar from './components/DealRadar.jsx'
 import styles from './App.module.css'
 
 const DEFAULT_FILTERS = { domain: '', round_type: '', year_min: '2023', year_max: '' }
@@ -90,6 +91,8 @@ export default function App() {
   return (
     <div className={styles.app}>
       <Header stats={stats} view={view} onViewChange={setView} />
+
+      {view === 'radar' && <DealRadar />}
 
       {view === 'analytics' && (
         <AnalyticsDashboard stats={stats} onBrowse={goToCompanies} />
