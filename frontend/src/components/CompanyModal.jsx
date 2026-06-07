@@ -8,14 +8,30 @@ export default function CompanyModal({ company, onClose }) {
   const [enrichment, setEnrichment] = useState(company ? enrichmentCache[company.id] || null : null)
   const [enrichLoading, setEnrichLoading] = useState(false)
 
+  async function fetchEnrichment(c) {
+    setEnrichLoading(true)
+    try {
+      const data = await api.enrich(c.id)
+      enrichmentCache[c.id] = data
+      setEnrichment(data)
+    } catch (e) {
+      setEnrichment({ error: 'Search failed. Please try again.' })
+    }
+    setEnrichLoading(false)
+  }
+
   useEffect(() => {
-    if (company) setEnrichment(enrichmentCache[company.id] || null)
+    if (!company) return
+    if (enrichmentCache[company.id]) {
+      setEnrichment(enrichmentCache[company.id])
+    } else {
+      setEnrichment(null)
+      fetchEnrichment(company)
+    }
   }, [company?.id])
 
   useEffect(() => {
-    function handleKey(e) {
-      if (e.key === 'Escape') onClose()
-    }
+    function handleKey(e) { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [onClose])
@@ -30,17 +46,7 @@ export default function CompanyModal({ company, onClose }) {
     ? company.verticals.split(',').map(s => s.trim()).filter(Boolean)
     : []
 
-  async function loadEnrichment() {
-    setEnrichLoading(true)
-    try {
-      const data = await api.enrich(company.id)
-      enrichmentCache[company.id] = data
-      setEnrichment(data)
-    } catch (e) {
-      setEnrichment({ error: 'Search failed. Please try again.' })
-    }
-    setEnrichLoading(false)
-  }
+  function loadEnrichment() { fetchEnrichment(company) }
 
   const websiteUrl = company.website
     ? (company.website.startsWith('http') ? company.website : `https://${company.website}`)
