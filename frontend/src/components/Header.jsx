@@ -13,6 +13,7 @@ export default function Header({ stats, view, onViewChange }) {
           <button className={`${styles.navBtn} ${view === 'analytics' ? styles.navActive : ''}`} onClick={() => onViewChange('analytics')}>Analytics</button>
           <button className={`${styles.navBtn} ${view === 'companies' ? styles.navActive : ''}`} onClick={() => onViewChange('companies')}>Companies</button>
           <button className={`${styles.navBtn} ${styles.radarBtn} ${view === 'radar' ? styles.navActive : ''}`} onClick={() => onViewChange('radar')}>◎ Deal Radar</button>
+          <button className={`${styles.navBtn} ${styles.networkBtn} ${view === 'network' ? styles.navActive : ''}`} onClick={() => onViewChange('network')}>◈ Network</button>
         </nav>
         {stats && (
           <div className={styles.pill}>

@@ -8,6 +8,7 @@ import CompanyModal from './components/CompanyModal.jsx'
 import StatsBar from './components/StatsBar.jsx'
 import AnalyticsDashboard from './components/AnalyticsDashboard.jsx'
 import DealRadar from './components/DealRadar.jsx'
+import InvestorGraph from './components/InvestorGraph.jsx'
 import styles from './App.module.css'
 
 const DEFAULT_FILTERS = { domain: '', round_type: '', year_min: '2023', year_max: '' }
@@ -93,6 +94,7 @@ export default function App() {
       <Header stats={stats} view={view} onViewChange={setView} />
 
       {view === 'radar' && <DealRadar />}
+      {view === 'network' && <InvestorGraph />}
 
       {view === 'analytics' && (
         <AnalyticsDashboard stats={stats} onBrowse={goToCompanies} />

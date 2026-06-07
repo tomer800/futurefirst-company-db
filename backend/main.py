@@ -9,6 +9,7 @@ from typing import Optional
 import search_engine
 import database
 import radar as radar_engine
+import investor_network
 import google_enrichment
 
 load_dotenv()
@@ -120,6 +121,19 @@ async def google_search_endpoint(q: str = Query(...)):
 
 
 # ── Admin endpoints ────────────────────────────────────────────────────────────
+
+@app.get("/api/investors/network")
+def get_investor_network(
+    min_deals: int = 2,
+    min_edge_weight: int = 2,
+    domain: Optional[str] = None,
+):
+    return investor_network.build_network(
+        min_deals=min_deals,
+        min_edge_weight=min_edge_weight,
+        domain_filter=domain or None,
+    )
+
 
 @app.get("/api/radar")
 def get_radar(

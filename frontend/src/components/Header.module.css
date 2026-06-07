@@ -104,3 +104,11 @@
   background: #22c55e !important;
   color: #000 !important;
 }
+
+.networkBtn {
+  color: #3b82f6 !important;
+}
+.networkBtn.navActive {
+  background: #3b82f6 !important;
+  color: #fff !important;
+}
