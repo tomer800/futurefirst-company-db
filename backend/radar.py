@@ -12,7 +12,9 @@ FINANCIAL_SUBDOMAIN_KEYWORDS = [
 
 BASE_DOMAIN_SCORES = {
     "AI Infrastructure & Developer Tools": 25,
+    "AI Infrastructure": 25,
     "Enterprise Software & AI": 25,
+    "Enterprise Software": 25,
     "FinTech": 28,
     "Healthcare & Life Sciences": 22,
     "LegalTech": 22,
@@ -60,6 +62,8 @@ REGULATED_KEYWORDS = [
     "mission-critical", "enterprise", "underwriting", "claims",
     "fintech", "wealth management", "asset management", "mortgage",
     "lending", "credit risk", "fraud", "aml", "kyc",
+    "ehr", "erp", "crm", "core banking", "legacy system", "deterministic",
+    "rule-governed", "workflow", "orchestration",
 ]
 
 AI_KEYWORDS = [
@@ -91,7 +95,7 @@ def score_domain(company: dict) -> int:
     base = BASE_DOMAIN_SCORES.get(domain, 2)
 
     # Boost AI Infra / Enterprise AI to 30 if subdomain/blurb has financial context
-    if domain in ("AI Infrastructure & Developer Tools", "Enterprise Software & AI"):
+    if domain in ("AI Infrastructure & Developer Tools", "AI Infrastructure", "Enterprise Software & AI", "Enterprise Software"):
         has_financial = any(kw in subdomain or kw in blurb for kw in FINANCIAL_SUBDOMAIN_KEYWORDS)
         if has_financial:
             return 30
