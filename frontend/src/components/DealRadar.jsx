@@ -89,8 +89,8 @@ function RadarModal({ company, onClose }) {
             <div className={styles.breakdownTitle}>Score Breakdown</div>
             <BreakdownRow label="Domain fit" value={breakdown.breakdown.domain} max={30} color="#3b82f6" />
             <BreakdownRow label="Stage" value={breakdown.breakdown.stage} max={25} color="#c9a84c" />
-            <BreakdownRow label="Keywords" value={breakdown.breakdown.keywords} max={25} color="#22c55e" />
-            <BreakdownRow label="Year" value={breakdown.breakdown.year} max={20} color="#8b5cf6" />
+            <BreakdownRow label="Keywords" value={breakdown.breakdown.keywords} max={35} color="#22c55e" />
+            <BreakdownRow label="Year" value={breakdown.breakdown.year} max={10} color="#8b5cf6" />
             <div className={styles.totalRow}>
               <span>Total</span>
               <span style={{ color: '#f0f0f2', fontWeight: 700 }}>{breakdown.score}/100</span>
@@ -198,10 +198,10 @@ export default function DealRadar() {
       <div className={styles.scoring}>
         <div className={styles.scoringTitle}>How we score</div>
         <div className={styles.scoringGrid}>
-          <div className={styles.scoringItem}><span style={{ color: '#3b82f6' }}>Domain fit</span> /30 — AI Infra, Enterprise AI, FinTech, Healthcare, LegalTech</div>
-          <div className={styles.scoringItem}><span style={{ color: '#c9a84c' }}>Stage</span> /25 — Seed & Pre-Seed score highest</div>
-          <div className={styles.scoringItem}><span style={{ color: '#22c55e' }}>Keywords</span> /25 — regulated, compliance, enterprise, clinical, AI-native</div>
-          <div className={styles.scoringItem}><span style={{ color: '#8b5cf6' }}>Year</span> /20 — 2024+ scores highest</div>
+          <div className={styles.scoringItem}><span style={{ color: '#3b82f6' }}>Domain fit</span> /30 — AI Infra + financial subdomain = 30, FinTech = 28, Healthcare/Legal = 22, others 0-10</div>
+          <div className={styles.scoringItem}><span style={{ color: '#c9a84c' }}>Stage</span> /25 — Seed & Pre-Seed = 25, Series A = 5, Series B+ = 0</div>
+          <div className={styles.scoringItem}><span style={{ color: '#22c55e' }}>Keywords</span> /35 — regulated, compliance, banking, insurance, clinical, AI-native, enterprise</div>
+          <div className={styles.scoringItem}><span style={{ color: '#8b5cf6' }}>Year</span> /10 — 2024+ = 10, 2023 = 8, 2022 = 4, earlier = 0-2</div>
         </div>
       </div>
 
