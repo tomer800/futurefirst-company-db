@@ -2,24 +2,78 @@ import sqlite3
 import numpy as np
 import os
 import pickle
+import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from database import DB_PATH
 
 INDEX_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "search_index.pkl")
 
+SYNONYMS = {
+    "insurance": "insurance underwriting claims fintech regulated",
+    "bank": "banking financial services fintech regulated",
+    "banking": "banking financial services fintech regulated",
+    "healthcare": "healthcare health medical clinical hospital",
+    "hospital": "healthcare health medical clinical hospital",
+    "medical": "healthcare health medical clinical hospital",
+    "legal": "legal legaltech compliance regulatory",
+    "lawyer": "legal legaltech compliance regulatory",
+    "law": "legal legaltech compliance regulatory",
+    "security": "cybersecurity security threat detection",
+    "cyber": "cybersecurity security threat detection attack",
+    "cloud": "cloud infrastructure devops deployment",
+    "data": "data infrastructure pipeline analytics",
+    "ai": "artificial intelligence machine learning",
+    "automation": "automation workflow agentic automated",
+    "compliance": "compliance regulatory regulatory fintech",
+    "fintech": "fintech financial payments banking",
+    "climate": "climate energy sustainability green",
+    "agriculture": "agriculture food farming agritech",
+    "real estate": "real estate construction proptech",
+    "logistics": "logistics supply chain mobility transportation",
+    "education": "education edtech learning",
+    "government": "government govtech public sector",
+    "defense": "defense aerospace military dual-use",
+    "drug": "pharma biotech life sciences drug discovery",
+    "biotech": "biotech pharma life sciences drug discovery",
+    "saas": "saas software enterprise b2b",
+    "enterprise": "enterprise software b2b saas",
+    "developer": "developer tools infrastructure devops api",
+    "llm": "llm language model ai infrastructure generative",
+    "generative": "generative ai llm language model",
+    "agentic": "agentic agent autonomous ai workflow",
+    "vertical": "vertical ai industry-specific enterprise",
+}
+
+def expand_query(query: str) -> str:
+    q = query.lower()
+    extras = []
+    for keyword, expansion in SYNONYMS.items():
+        if keyword in q:
+            extras.append(expansion)
+    if extras:
+        return query + " " + " ".join(extras)
+    return query
+
 
 def build_text(row):
-    parts = [
-        row.get("name", ""),
-        row.get("blurb", ""),
-        row.get("vc_domain", ""),
-        row.get("vc_subdomain", ""),
-        row.get("verticals", ""),
-        row.get("investors", ""),
-        row.get("ceo", ""),
-    ]
-    return " ".join(p for p in parts if p)
+    name = row.get("name", "") or ""
+    blurb = row.get("blurb", "") or ""
+    domain = row.get("vc_domain", "") or ""
+    subdomain = row.get("vc_subdomain", "") or ""
+    verticals = row.get("verticals", "") or ""
+    investors = row.get("investors", "") or ""
+    ceo = row.get("ceo", "") or ""
+    # Weight important fields by repeating them
+    return " ".join([
+        name, name, name,
+        domain, domain,
+        subdomain, subdomain,
+        blurb,
+        verticals,
+        investors,
+        ceo,
+    ])
 
 
 def build_index():
@@ -33,10 +87,11 @@ def build_index():
     texts = [build_text(r) for r in records]
 
     vectorizer = TfidfVectorizer(
-        ngram_range=(1, 2),
-        max_features=20000,
+        ngram_range=(1, 3),
+        max_features=30000,
         sublinear_tf=True,
         min_df=1,
+        analyzer="word",
     )
     matrix = vectorizer.fit_transform(texts)
 
@@ -69,7 +124,8 @@ def _ensure_loaded():
 def search(query: str, top_k: int = 50, domain: str = None, year_min: int = None, year_max: int = None, round_type: str = None):
     _ensure_loaded()
 
-    query_vec = _vectorizer.transform([query])
+    expanded = expand_query(query)
+    query_vec = _vectorizer.transform([expanded])
     scores = cosine_similarity(query_vec, _matrix).flatten()
     ranked = np.argsort(scores)[::-1]
 
@@ -81,7 +137,7 @@ def search(query: str, top_k: int = 50, domain: str = None, year_min: int = None
         if len(results) >= top_k:
             break
         score = float(scores[idx])
-        if score < 0.01:
+        if score < 0.005:
             break
         company_id = _ids[idx]
         row = conn.execute("SELECT * FROM companies WHERE id = ?", [company_id]).fetchone()

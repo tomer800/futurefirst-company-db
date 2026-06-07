@@ -67,3 +67,32 @@
   transition: color var(--transition);
 }
 .link:hover { color: var(--text2); }
+
+.nav {
+  display: flex;
+  align-items: center;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.navBtn:hover { color: var(--text); }
+.navActive {
+  background: var(--gold) !important;
+  color: #000 !important;
+  font-weight: 600;
+}
