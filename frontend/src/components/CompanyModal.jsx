@@ -2,9 +2,15 @@ import { useState, useEffect } from 'react'
 import { api } from '../api.js'
 import styles from './CompanyModal.module.css'
 
+const enrichmentCache = {}
+
 export default function CompanyModal({ company, onClose }) {
-  const [enrichment, setEnrichment] = useState(null)
+  const [enrichment, setEnrichment] = useState(company ? enrichmentCache[company.id] || null : null)
   const [enrichLoading, setEnrichLoading] = useState(false)
+
+  useEffect(() => {
+    if (company) setEnrichment(enrichmentCache[company.id] || null)
+  }, [company?.id])
 
   useEffect(() => {
     function handleKey(e) {
@@ -28,9 +34,10 @@ export default function CompanyModal({ company, onClose }) {
     setEnrichLoading(true)
     try {
       const data = await api.enrich(company.id)
+      enrichmentCache[company.id] = data
       setEnrichment(data)
     } catch (e) {
-      setEnrichment({ error: 'Google API not configured or quota exceeded.' })
+      setEnrichment({ error: 'Search failed. Please try again.' })
     }
     setEnrichLoading(false)
   }
