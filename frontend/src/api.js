@@ -16,5 +16,8 @@ export const api = {
   filters: () => get('/filters'),
   enrich: (id) => get(`/enrich/${id}`),
   googleSearch: (q) => get('/google-search', { q }),
+  founder: (id) => get(`/founder/${id}`),
+  founderStats: () => get('/founder/stats/summary'),
+  batchEnrichFounders: (limit = 20) => fetch(BASE + `/founder/batch?limit=${limit}`, { method: 'POST' }).then(r => r.json()),
   rebuildIndex: () => fetch(BASE + '/admin/rebuild-index', { method: 'POST' }).then(r => r.json()),
 }

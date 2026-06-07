@@ -83,6 +83,52 @@
   color: var(--text2);
 }
 
+.ceoRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.founderLoading {
+  font-size: 12px;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.founderBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.founderBadge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+.founderDetails {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.linkedinLink {
+  font-size: 12px;
+  color: #3b82f6;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+.linkedinLink:hover { opacity: 0.75; }
+
+.founderMeta {
+  font-size: 11px;
+  color: var(--text3);
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;

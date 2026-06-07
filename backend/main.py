@@ -1,5 +1,6 @@
 import os
 import sys
+import asyncio
 from fastapi import FastAPI, Query, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -10,6 +11,7 @@ import search_engine
 import database
 import radar as radar_engine
 import investor_network
+import founder_enrichment as founder_eng
 import google_enrichment
 
 load_dotenv()
@@ -121,6 +123,45 @@ async def google_search_endpoint(q: str = Query(...)):
 
 
 # ── Admin endpoints ────────────────────────────────────────────────────────────
+
+@app.get("/api/founder/{company_id}")
+async def get_founder_enrichment(company_id: int, force: bool = False):
+    company = database.get_company_by_id(company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Not found")
+    ceo = company.get("ceo", "")
+    if not ceo:
+        return {"error": "No CEO name in database", "company_id": company_id}
+    result = await founder_eng.enrich_founder(company_id, ceo, company["name"], force=force)
+    return result
+
+
+@app.get("/api/founder/stats/summary")
+def founder_stats():
+    return founder_eng.get_enrichment_stats()
+
+
+@app.post("/api/founder/batch")
+async def batch_enrich_founders(background_tasks: BackgroundTasks, limit: int = 20):
+    conn = database.get_conn()
+    rows = conn.execute(
+        """SELECT c.id, c.name, c.ceo FROM companies c
+           LEFT JOIN founder_enrichment fe ON c.id = fe.company_id
+           WHERE c.ceo != '' AND fe.company_id IS NULL
+           ORDER BY c.radar_score DESC LIMIT ?""",
+        [limit]
+    ).fetchall()
+    conn.close()
+    companies = [dict(r) for r in rows]
+
+    async def run_batch():
+        for c in companies:
+            await founder_eng.enrich_founder(c["id"], c["ceo"], c["name"])
+            await asyncio.sleep(1.5)  # rate limit
+
+    background_tasks.add_task(run_batch)
+    return {"status": "started", "queued": len(companies), "message": f"Enriching {len(companies)} founders in background"}
+
 
 @app.get("/api/investors/network")
 def get_investor_network(

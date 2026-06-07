@@ -3,10 +3,20 @@ import { api } from '../api.js'
 import styles from './CompanyModal.module.css'
 
 const enrichmentCache = {}
+const founderCache = {}
+
+const FOUNDER_TYPE_CONFIG = {
+  serial:       { label: 'Serial Entrepreneur', color: '#22c55e', icon: '🔁' },
+  'second-time':{ label: 'Second-time Founder', color: '#3b82f6', icon: '2️⃣' },
+  'first-time': { label: 'First-time Founder',  color: '#9999aa', icon: '🆕' },
+  unknown:      { label: 'Founder',              color: '#9999aa', icon: '👤' },
+}
 
 export default function CompanyModal({ company, onClose }) {
   const [enrichment, setEnrichment] = useState(company ? enrichmentCache[company.id] || null : null)
   const [enrichLoading, setEnrichLoading] = useState(false)
+  const [founderData, setFounderData] = useState(company ? founderCache[company.id] || null : null)
+  const [founderLoading, setFounderLoading] = useState(false)
 
   async function fetchEnrichment(c) {
     setEnrichLoading(true)
@@ -20,8 +30,28 @@ export default function CompanyModal({ company, onClose }) {
     setEnrichLoading(false)
   }
 
+  async function fetchFounder(c) {
+    if (!c.ceo) return
+    setFounderLoading(true)
+    try {
+      const res = await fetch(`/api/founder/${c.id}`)
+      const data = await res.json()
+      founderCache[c.id] = data
+      setFounderData(data)
+    } catch (e) {}
+    setFounderLoading(false)
+  }
+
   useEffect(() => {
     if (!company) return
+    // Founder enrichment
+    if (founderCache[company.id]) {
+      setFounderData(founderCache[company.id])
+    } else {
+      setFounderData(null)
+      fetchFounder(company)
+    }
+    // News enrichment
     if (enrichmentCache[company.id]) {
       setEnrichment(enrichmentCache[company.id])
     } else {
@@ -65,7 +95,40 @@ export default function CompanyModal({ company, onClose }) {
             )}
           </div>
           {company.ceo && (
-            <div className={styles.ceo}>CEO: {company.ceo}</div>
+            <div className={styles.ceoRow}>
+              <div className={styles.ceo}>CEO: {company.ceo}</div>
+              {founderLoading && <span className={styles.founderLoading}>🔍</span>}
+              {founderData && !founderData.error && (() => {
+                const cfg = FOUNDER_TYPE_CONFIG[founderData.founder_type] || FOUNDER_TYPE_CONFIG.unknown
+                return (
+                  <div className={styles.founderBadges}>
+                    <span className={styles.founderBadge} style={{ color: cfg.color, borderColor: `${cfg.color}30`, background: `${cfg.color}10` }}>
+                      {cfg.icon} {cfg.label}
+                    </span>
+                    {founderData.elite_unit === 1 && (
+                      <span className={styles.founderBadge} style={{ color: '#f59e0b', borderColor: 'rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.1)' }}>
+                        🎖️ Elite Unit
+                      </span>
+                    )}
+                  </div>
+                )
+              })()}
+            </div>
+          )}
+          {founderData && !founderData.error && (founderData.linkedin_url || founderData.past_companies || founderData.education) && (
+            <div className={styles.founderDetails}>
+              {founderData.linkedin_url && (
+                <a href={founderData.linkedin_url} target="_blank" rel="noreferrer" className={styles.linkedinLink}>
+                  LinkedIn ↗
+                </a>
+              )}
+              {founderData.past_companies && (
+                <span className={styles.founderMeta}>Past: {founderData.past_companies}</span>
+              )}
+              {founderData.education && (
+                <span className={styles.founderMeta}>🎓 {founderData.education}</span>
+              )}
+            </div>
           )}
           <div className={styles.tags}>
             {company.vc_domain && (
