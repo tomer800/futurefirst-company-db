@@ -98,6 +98,69 @@ def get_stats():
     return database.get_stats()
 
 
+@app.get("/api/stats/extended")
+def get_extended_stats():
+    import sqlite3
+    from collections import Counter, defaultdict
+    conn = sqlite3.connect(database.DB_PATH)
+    conn.row_factory = sqlite3.Row
+
+    # Domain by year (2023-2026)
+    rows = conn.execute("""
+        SELECT vc_domain, year, COUNT(*) as count FROM companies
+        WHERE year >= 2023 AND year <= 2026 AND vc_domain != ''
+        GROUP BY vc_domain, year ORDER BY vc_domain, year
+    """).fetchall()
+    domain_year = defaultdict(dict)
+    for r in rows:
+        domain_year[r['vc_domain']][int(r['year'])] = r['count']
+    top_domains = sorted(domain_year.keys(), key=lambda d: sum(domain_year[d].values()), reverse=True)[:8]
+    domain_growth = [
+        {"domain": d, "2023": domain_year[d].get(2023,0), "2024": domain_year[d].get(2024,0),
+         "2025": domain_year[d].get(2025,0), "2026": domain_year[d].get(2026,0)}
+        for d in top_domains
+    ]
+
+    # Top investors
+    inv_rows = conn.execute("SELECT investors FROM companies WHERE investors != ''").fetchall()
+    counter = Counter()
+    for r in inv_rows:
+        for inv in r['investors'].split(','):
+            inv = inv.strip()
+            if inv and len(inv) > 2: counter[inv] += 1
+    top_investors = [{"name": inv, "count": count} for inv, count in counter.most_common(12)]
+
+    # Radar distribution
+    radar_rows = conn.execute(
+        "SELECT radar_label, radar_tier, COUNT(*) as count FROM companies GROUP BY radar_tier ORDER BY radar_tier DESC"
+    ).fetchall()
+    radar_dist = [dict(r) for r in radar_rows]
+
+    # Stage by year
+    stage_rows = conn.execute("""
+        SELECT round_type, year, COUNT(*) as count FROM companies
+        WHERE year >= 2023 AND year <= 2026 AND round_type != ''
+        GROUP BY round_type, year
+    """).fetchall()
+    stage_map = defaultdict(dict)
+    for r in stage_rows:
+        stage_map[r['round_type']][int(r['year'])] = r['count']
+    key_stages = ['Seed Round','Pre-Seed','Accelerator/lncubator','A','Angel Round','Grant']
+    stage_by_year = [
+        {"stage": s, "2023": stage_map[s].get(2023,0), "2024": stage_map[s].get(2024,0),
+         "2025": stage_map[s].get(2025,0), "2026": stage_map[s].get(2026,0)}
+        for s in key_stages if s in stage_map
+    ]
+
+    conn.close()
+    return {
+        "domain_growth": domain_growth,
+        "top_investors": top_investors,
+        "radar_distribution": radar_dist,
+        "stage_by_year": stage_by_year,
+    }
+
+
 @app.get("/api/filters")
 def get_filters():
     return database.get_filter_options()
