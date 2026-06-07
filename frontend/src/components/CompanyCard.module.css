@@ -39,6 +39,13 @@
   gap: 8px;
 }
 
+.nameLeft {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
 .name {
   font-size: 15px;
   font-weight: 600;

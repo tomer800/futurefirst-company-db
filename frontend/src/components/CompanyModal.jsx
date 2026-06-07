@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api.js'
 import styles from './CompanyModal.module.css'
+import CompanyLogo from './CompanyLogo.jsx'
 
 const enrichmentCache = {}
 const founderCache = {}
@@ -89,7 +90,10 @@ export default function CompanyModal({ company, onClose }) {
 
         <div className={styles.header}>
           <div className={styles.headerTop}>
-            <h2 className={styles.name}>{company.name}</h2>
+            <div className={styles.nameWithLogo}>
+              <CompanyLogo website={company.website} name={company.name} size="lg" />
+              <h2 className={styles.name}>{company.name}</h2>
+            </div>
             {company.year && (
               <span className={styles.year}>Est. {Math.round(company.year)}</span>
             )}

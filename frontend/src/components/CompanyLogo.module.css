@@ -1,0 +1,19 @@
+.logo {
+  border-radius: 6px;
+  object-fit: contain;
+  background: #fff;
+  flex-shrink: 0;
+  display: block;
+}
+
+.initials {
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  font-family: inherit;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}

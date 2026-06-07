@@ -1,5 +1,6 @@
 import styles from './CompanyCard.module.css'
 import RadarBadge from './RadarBadge.jsx'
+import CompanyLogo from './CompanyLogo.jsx'
 
 const DOMAIN_COLORS = {
   'Healthcare & Life Sciences': '#10b981',
@@ -48,7 +49,10 @@ export default function CompanyCard({ company, onClick }) {
     <article className={styles.card} onClick={() => onClick(company)}>
       <div className={styles.top}>
         <div className={styles.nameRow}>
-          <h3 className={styles.name}>{company.name}</h3>
+          <div className={styles.nameLeft}>
+            <CompanyLogo website={company.website} name={company.name} size="sm" />
+            <h3 className={styles.name}>{company.name}</h3>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             {company.radar_tier >= 2 && <RadarBadge score={company.radar_score} tier={company.radar_tier} />}
             {company.year && <span className={styles.year}>{Math.round(company.year)}</span>}

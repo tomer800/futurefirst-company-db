@@ -61,6 +61,13 @@
   padding-right: 36px;
 }
 
+.nameWithLogo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 .name {
   font-size: 22px;
   font-weight: 700;
