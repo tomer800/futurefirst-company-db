@@ -56,7 +56,6 @@ export default function AnalyticsDashboard({ stats, onBrowse }) {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <img src="/assets-static/ff_banner.png" alt="" className={styles.heroBg} />
         <div className={styles.heroOverlay} />
         <div className={styles.heroContent}>
           <img src="/assets-static/logo_white.png" alt="FutureFirst Ventures" className={styles.heroLogo} />
