@@ -5,6 +5,13 @@
   margin: 0 auto;
 }
 
+@media (max-width: 768px) {
+  .box { height: 46px; padding: 0 6px 0 12px; }
+  .input { font-size: 14px; }
+  .btn { padding: 0 12px; height: 32px; font-size: 12px; }
+  .examples { flex-direction: column; align-items: flex-start; }
+}
+
 .box {
   display: flex;
   align-items: center;

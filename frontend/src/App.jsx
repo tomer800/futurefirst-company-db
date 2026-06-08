@@ -26,6 +26,7 @@ export default function App() {
   const [selected, setSelected] = useState(null)
   const [offset, setOffset] = useState(0)
   const [hasMore, setHasMore] = useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
   const LIMIT = 48
 
   useEffect(() => {
@@ -112,12 +113,25 @@ export default function App() {
           </div>
 
           <div className={styles.main}>
-            <FilterPanel
-              filters={filterOptions}
-              active={filters}
-              onChange={handleFilterChange}
-              stats={stats}
-            />
+            {/* Desktop filter panel */}
+            <div className={styles.desktopFilter}>
+              <FilterPanel filters={filterOptions} active={filters} onChange={handleFilterChange} stats={stats} />
+            </div>
+
+            {/* Mobile filter toggle */}
+            <button className={styles.filterToggle} onClick={() => setFilterOpen(true)}>
+              ⚙ Filters {Object.values(filters).filter(Boolean).length > 0 ? `(${Object.values(filters).filter(Boolean).length})` : ''}
+            </button>
+            {filterOpen && (
+              <div className={styles.filterDrawerOverlay} onClick={() => setFilterOpen(false)}>
+                <div className={styles.filterDrawer} onClick={e => e.stopPropagation()}>
+                  <div className={styles.filterDrawerClose}>
+                    <button className={styles.filterDrawerCloseBtn} onClick={() => setFilterOpen(false)}>Done</button>
+                  </div>
+                  <FilterPanel filters={filterOptions} active={filters} onChange={(f) => { handleFilterChange(f); }} stats={stats} />
+                </div>
+              </div>
+            )}
 
             <div className={styles.content}>
               <div className={styles.contentHeader}>

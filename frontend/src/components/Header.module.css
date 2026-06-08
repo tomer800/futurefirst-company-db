@@ -112,3 +112,20 @@
   background: #3b82f6 !important;
   color: #fff !important;
 }
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 16px;
+    height: 52px;
+    flex-wrap: wrap;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .left { padding: 10px 0 6px; }
+  .divider, .title, .pill, .link { display: none; }
+  .right { padding: 0 0 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .nav { gap: 2px; flex-shrink: 0; }
+  .navBtn { padding: 5px 10px; font-size: 11px; white-space: nowrap; }
+}

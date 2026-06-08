@@ -85,6 +85,16 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 768px) {
+  .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 16px 10px; }
+  .headerStats { align-self: stretch; justify-content: space-around; }
+  .controls { padding: 10px 16px; gap: 14px; overflow-x: auto; flex-wrap: nowrap; }
+  .legend { display: none; }
+  .panel { width: 100%; border-left: none; border-top: 1px solid var(--border); height: 50vh; }
+  .graphArea { flex-direction: column; }
+  .graphContainer { height: 50vh; }
+}
+
 .controlGroup {
   display: flex;
   flex-direction: column;

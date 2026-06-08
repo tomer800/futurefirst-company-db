@@ -45,3 +45,8 @@ a { color: inherit; text-decoration: none; }
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Mobile base ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root { --radius: 8px; }
+}
